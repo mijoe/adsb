@@ -12,7 +12,7 @@ volumes:
 
 services:
   readsb:
-    image: mikenye/readsb-protobuf:latest
+    image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf:latest 
     tty: true
     container_name: readsb
     hostname: readsb
@@ -39,7 +39,7 @@ services:
       - /run/readsb
       - /var/log
   fr24:
-    image: mikenye/fr24feed:latest
+    image: ghcr.io/sdr-enthusiasts/docker-flightradar24:latest 
     tty: true
     container_name: fr24
     restart: always
@@ -55,7 +55,7 @@ services:
     tmpfs:
       - /var/log
   piaware:
-    image: mikenye/piaware:latest
+    image: ghcr.io/sdr-enthusiasts/docker-piaware:latest 
     tty: true
     container_name: piaware
     restart: always
@@ -73,14 +73,12 @@ services:
       - /run:exec,size=64M
       - /var/log
   rbfeeder:
-    image: mikenye/radarbox:latest
+    image: ghcr.io/sdr-enthusiasts/docker-radarbox:latest 
     tty: true
     container_name: rbfeeder
     restart: always
     depends_on:
       - readsb
-    volumes:
-      - "radarbox_segfault_fix:/sys/class/thermal:ro"
     environment:
       - BEASTHOST=readsb
       - LAT=${FEEDER_LAT}
@@ -92,7 +90,7 @@ services:
       - /run:exec,size=64M
       - /var/log
   adsbx:
-    image: mikenye/adsbexchange:latest
+    image: ghcr.io/sdr-enthusiasts/docker-adsbexchange:latest 
     tty: true
     container_name: adsbx
     restart: always
