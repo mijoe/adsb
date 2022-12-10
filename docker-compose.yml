@@ -3,12 +3,6 @@ version: '3.8'
 volumes:
   readsbpb_rrd:
   readsbpb_autogain:
-  radarbox_segfault_fix:
-    driver: local
-    driver_opts:
-      type: none
-      device: /opt/adsb/data/radarbox_segfault_fix
-      o: bind
 
 services:
   readsb:
