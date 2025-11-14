@@ -1,5 +1,3 @@
-version: '3.8'
-
 volumes:
   ultrafeeder_globe_history:
   ultrafeeder_graphs1090:
