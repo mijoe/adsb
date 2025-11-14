@@ -54,10 +54,10 @@ services:
         mlat,feed.theairtraffic.com,31090,39004;
         mlat,skyfeed.hpradar.com,31090,39005;
         mlat,dati.flyitalyadsb.com,30100,39007;
-        mlathub,piaware,30105,beast_in;
-        mlathub,rbfeeder,30105,beast_in;
-        mlathub,radarvirtuel,30105,beast_in;
-        mlathub,planewatch,30105,beast_in
+      #  mlathub,piaware,30105,beast_in;
+      #  mlathub,rbfeeder,30105,beast_in;
+      #  mlathub,radarvirtuel,30105,beast_in;
+      #  mlathub,planewatch,30105,beast_in
       # If you really want to feed ADSBExchange, you can do so by adding this above:
       #        adsb,feed1.adsbexchange.com,30004,beast_reduce_plus_out,uuid=${ADSBX_UUID};
       #        mlat,feed.adsbexchange.com,31090,39008,uuid=${ADSBX_UUID}
@@ -95,10 +95,10 @@ services:
       # --------------------------------------------------
       # Prometheus and InfluxDB connection parameters:
       # (See above for the correct image tag you must use to enable this)
-      - INFLUXDBV2_URL=${INFLUX_URL}
-      - INFLUXDBV2_TOKEN=${INFLUX_TOKEN}
-      - INFLUXDBV2_BUCKET=${INFLUX_BUCKET}
-      - PROMETHEUS_ENABLE=true
+      #- INFLUXDBV2_URL=${INFLUX_URL}
+      #- INFLUXDBV2_TOKEN=${INFLUX_TOKEN}
+      #- INFLUXDBV2_BUCKET=${INFLUX_BUCKET}
+      #- PROMETHEUS_ENABLE=true
     volumes:
       - /opt/adsb/ultrafeeder/globe_history:/var/globe_history
       - /opt/adsb/ultrafeeder/graphs1090:/var/lib/collectd
