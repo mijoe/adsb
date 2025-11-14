@@ -70,7 +70,7 @@ services:
       - /run:exec,size=64M
       - /var/log
   rbfeeder:
-    image: ghcr.io/sdr-enthusiasts/docker-radarbox:latest
+    image: ghcr.io/sdr-enthusiasts/docker-airnavradar:latest
     tty: true
     container_name: rbfeeder
     restart: always
