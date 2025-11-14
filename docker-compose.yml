@@ -1,20 +1,27 @@
 version: '3.8'
 
 volumes:
-  readsbpb_rrd:
-  readsbpb_autogain:
+  ultrafeeder_globe_history:
+  ultrafeeder_graphs1090:
+  ultrafeeder_collectd:
 
 services:
-  readsb:
-    image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf:latest 
+  ultrafeeder:
+    image: ghcr.io/sdr-enthusiasts/docker-adsb-ultrafeeder:latest
     tty: true
-    container_name: readsb
-    hostname: readsb
+    container_name: ultrafeeder
+    hostname: ultrafeeder
     restart: always
-    devices:
-      - /dev/bus/usb
+    device_cgroup_rules:
+      - 'c 189:* rwm'
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb:rw
+      - ultrafeeder_globe_history:/var/globe_history
+      - ultrafeeder_graphs1090:/var/lib/collectd
+      - ultrafeeder_collectd:/run/collectd
     ports:
-      - 8080:8080
+      - 8080:80
+      - 9273-9274:9273-9274
     environment:
       - TZ=${FEEDER_TZ}
       - READSB_DEVICE_TYPE=rtlsdr
@@ -22,43 +29,39 @@ services:
       - READSB_GAIN=autogain
       - READSB_LAT=${FEEDER_LAT}
       - READSB_LON=${FEEDER_LONG}
+      - READSB_ALT=${FEEDER_ALT_M}m
       - READSB_RX_LOCATION_ACCURACY=2
       - READSB_STATS_RANGE=true
       - READSB_NET_ENABLE=true
-        #      - INFLUXDBURL=http://pi:8086
-    volumes:
-      - readsbpb_rrd:/run/collectd
-      - readsbpb_autogain:/run/autogain
-    tmpfs:
-      - /run/readsb
-      - /var/log
+      - UUID=${ADSBX_UUID}
+      - ULTRAFEEDER_CONFIG=adsb,feed1.adsbexchange.com,30004,beast_reduce_plus_out,uuid=${ADSBX_UUID};mlat,feed.adsbexchange.com,31090,39001
   fr24:
-    image: ghcr.io/sdr-enthusiasts/docker-flightradar24:latest 
+    image: ghcr.io/sdr-enthusiasts/docker-flightradar24:latest
     tty: true
     container_name: fr24
     restart: always
     depends_on:
-      - readsb
+      - ultrafeeder
     ports:
       - 8754:8754
     environment:
-      - BEASTHOST=readsb
+      - BEASTHOST=ultrafeeder
       - TZ=${FEEDER_TZ}
       - FR24KEY=${FR24_SHARING_KEY}
       - MLAT=yes
     tmpfs:
       - /var/log
   piaware:
-    image: ghcr.io/sdr-enthusiasts/docker-piaware:latest 
+    image: ghcr.io/sdr-enthusiasts/docker-piaware:latest
     tty: true
     container_name: piaware
     restart: always
     depends_on:
-      - readsb
+      - ultrafeeder
     ports:
       - 8081:8080
     environment:
-      - BEASTHOST=readsb
+      - BEASTHOST=ultrafeeder
       - LAT=${FEEDER_LAT}
       - LONG=${FEEDER_LONG}
       - TZ=${FEEDER_TZ}
@@ -67,14 +70,14 @@ services:
       - /run:exec,size=64M
       - /var/log
   rbfeeder:
-    image: ghcr.io/sdr-enthusiasts/docker-radarbox:latest 
+    image: ghcr.io/sdr-enthusiasts/docker-radarbox:latest
     tty: true
     container_name: rbfeeder
     restart: always
     depends_on:
-      - readsb
+      - ultrafeeder
     environment:
-      - BEASTHOST=readsb
+      - BEASTHOST=ultrafeeder
       - LAT=${FEEDER_LAT}
       - LONG=${FEEDER_LONG}
       - ALT=${FEEDER_ALT_M}
@@ -84,14 +87,14 @@ services:
       - /run:exec,size=64M
       - /var/log
   adsbx:
-    image: ghcr.io/sdr-enthusiasts/docker-adsbexchange:latest 
+    image: ghcr.io/sdr-enthusiasts/docker-adsbexchange:latest
     tty: true
     container_name: adsbx
     restart: always
     depends_on:
-      - readsb
+      - ultrafeeder
     environment:
-      - BEASTHOST=readsb
+      - BEASTHOST=ultrafeeder
       - LAT=${FEEDER_LAT}
       - LONG=${FEEDER_LONG}
       - ALT=${FEEDER_ALT_M}m
