@@ -86,24 +86,6 @@ services:
     tmpfs:
       - /run:exec,size=64M
       - /var/log
-  adsbx:
-    image: ghcr.io/sdr-enthusiasts/docker-adsbexchange:latest
-    tty: true
-    container_name: adsbx
-    restart: always
-    depends_on:
-      - ultrafeeder
-    environment:
-      - BEASTHOST=ultrafeeder
-      - LAT=${FEEDER_LAT}
-      - LONG=${FEEDER_LONG}
-      - ALT=${FEEDER_ALT_M}m
-      - SITENAME=${ADSBX_SITENAME}
-      - UUID=${ADSBX_UUID}
-      - TZ=${FEEDER_TZ}
-    tmpfs:
-      - /run:exec,size=64M,uid=1000,gid=1000
-      - /var/log
   autoheal:
     image: willfarrell/autoheal:latest
     tty: true
