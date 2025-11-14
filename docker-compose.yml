@@ -1,7 +1,6 @@
 volumes:
   ultrafeeder_globe_history:
   ultrafeeder_graphs1090:
-  ultrafeeder_collectd:
 
 services:
   ultrafeeder:
@@ -9,18 +8,19 @@ services:
     tty: true
     container_name: ultrafeeder
     hostname: ultrafeeder
-    restart: always
+    restart: unless-stopped
     device_cgroup_rules:
       - 'c 189:* rwm'
     volumes:
       - /dev/bus/usb:/dev/bus/usb:rw
       - ultrafeeder_globe_history:/var/globe_history
       - ultrafeeder_graphs1090:/var/lib/collectd
-      - ultrafeeder_collectd:/run/collectd
+      - /proc/diskstats:/proc/diskstats:ro
     ports:
       - 8080:80
       - 9273-9274:9273-9274
     environment:
+      - LOGLEVEL=error
       - TZ=${FEEDER_TZ}
       - READSB_DEVICE_TYPE=rtlsdr
       - READSB_RTLSDR_DEVICE=1090
@@ -32,7 +32,26 @@ services:
       - READSB_STATS_RANGE=true
       - READSB_NET_ENABLE=true
       - UUID=${ADSBX_UUID}
+      - MLAT_USER=${FEEDER_NAME}
       - ULTRAFEEDER_CONFIG=adsb,feed1.adsbexchange.com,30004,beast_reduce_plus_out,uuid=${ADSBX_UUID};mlat,feed.adsbexchange.com,31090,39001
+      - TAR1090_DEFAULTCENTERLAT=${FEEDER_LAT}
+      - TAR1090_DEFAULTCENTERLON=${FEEDER_LONG}
+      - TAR1090_MESSAGERATEINTITLE=true
+      - TAR1090_PAGETITLE=${FEEDER_NAME}
+      - TAR1090_PLANECOUNTINTITLE=true
+      - TAR1090_ENABLE_AC_DB=true
+      - TAR1090_FLIGHTAWARELINKS=true
+      - TAR1090_SITESHOW=true
+      - TAR1090_RANGE_OUTLINE_COLORED_BY_ALTITUDE=true
+      - TAR1090_RANGE_OUTLINE_WIDTH=2.0
+      - TAR1090_RANGERINGSDISTANCES=50,100,150,200
+      - TAR1090_RANGERINGSCOLORS='#1A237E','#0D47A1','#42A5F5','#64B5F6'
+      - GRAPHS1090_DARKMODE=true
+      - PROMETHEUS_ENABLE=true
+    tmpfs:
+      - /run:exec,size=256M
+      - /tmp:size=128M
+      - /var/log:size=32M
   fr24:
     image: ghcr.io/sdr-enthusiasts/docker-flightradar24:latest
     tty: true
