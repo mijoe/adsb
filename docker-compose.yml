@@ -69,10 +69,10 @@ services:
     tmpfs:
       - /run:exec,size=64M
       - /var/log
-  rbfeeder:
+  airnavradar:
     image: ghcr.io/sdr-enthusiasts/docker-airnavradar:latest
     tty: true
-    container_name: rbfeeder
+    container_name: airnavradar
     restart: always
     depends_on:
       - ultrafeeder
@@ -82,7 +82,7 @@ services:
       - LONG=${FEEDER_LONG}
       - ALT=${FEEDER_ALT_M}
       - TZ=${FEEDER_TZ}
-      - SHARING_KEY=${RADARBOX_SHARING_KEY}
+      - SHARING_KEY=${AIRNAVRADAR_SHARING_KEY}
     tmpfs:
       - /run:exec,size=64M
       - /var/log
